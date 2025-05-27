@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澳门一日游互动行程规划 - 6月5日</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices: 
+        - Itinerary Flow: Chronological sections with detailed text blocks for each step. Goal: Organize, Inform. Interaction: Scroll, Read. Justification: Natural for travel plans.
+        - Timings & Durations: Clearly displayed text. Goal: Inform.
+        - Locations, Activities, Transport: Text with Unicode icons (e.g., 🚌, 🚶, 🏛️, ✨). Goal: Inform.
+        - Food Recommendations: Bulleted lists within relevant itinerary steps. Goal: Inform.
+        - Key Information (e.g., free shuttles, last bus): Highlighted text. Goal: Inform.
+        - Summary Table ("精华速览"): HTML table for quick reference. Goal: Organize, Inform.
+        - Travel Tips ("温馨提示"): Bulleted list. Goal: Inform.
+        - Time Allocation Chart: A Chart.js donut chart visualizing approximate time spent in major phases (Morning, Afternoon, Evening/Night). Goal: Inform, Compare. Interaction: View. Justification: Provides a visual summary of the day's pacing.
+        - Library/Method: HTML, Tailwind CSS, Vanilla JS (for navigation and chart), Chart.js.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Tailwind's default sans-serif is good */
+        }
+        .sticky-nav {
+            position: -webkit-sticky; /* Safari */
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .content-section {
+            padding-top: 60px; /* Offset for sticky nav */
+            margin-top: -60px; /* Negative margin to counteract padding for anchor links */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px; /* Max width for the donut chart */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Default height */
+            max-height: 350px; /* Max height */
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        /* Custom scrollbar for better aesthetics (optional) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* Tailwind gray-300 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* Tailwind gray-400 */
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800">
+
+    <nav class="sticky-nav bg-teal-700 text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-2xl font-bold hover:text-teal-200 transition-colors">澳门一日游</a>
+                </div>
+                <div class="hidden md:flex space-x-3 lg:space-x-4">
+                    <a href="#section-morning" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition-colors">☀️ 上午</a>
+                    <a href="#section-afternoon" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition-colors">🏙️ 下午</a>
+                    <a href="#section-evening" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition-colors">🌃 傍晚</a>
+                    <a href="#section-night" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition-colors">  夜间</a>
+                    <a href="#section-summary" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition-colors">📊 速览</a>
+                    <a href="#section-chart" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition-colors">🕒 时间分配</a>
+                    <a href="#section-tips" class="px-3 py-2 rounded-md text-sm font-medium hover:bg-teal-600 transition-colors">💡 贴士</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white hover:text-teal-200 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-teal-700">
+            <a href="#section-morning" class="block px-4 py-3 text-sm hover:bg-teal-600 transition-colors">☀️ 上午</a>
+            <a href="#section-afternoon" class="block px-4 py-3 text-sm hover:bg-teal-600 transition-colors">🏙️ 下午</a>
+            <a href="#section-evening" class="block px-4 py-3 text-sm hover:bg-teal-600 transition-colors">🌃 傍晚</a>
+            <a href="#section-night" class="block px-4 py-3 text-sm hover:bg-teal-600 transition-colors">🌙 夜间</a>
+            <a href="#section-summary" class="block px-4 py-3 text-sm hover:bg-teal-600 transition-colors">📊 速览</a>
+            <a href="#section-chart" class="block px-4 py-3 text-sm hover:bg-teal-600 transition-colors">🕒 时间分配</a>
+            <a href="#section-tips" class="block px-4 py-3 text-sm hover:bg-teal-600 transition-colors">💡 贴士</a>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto p-4 sm:p-6 md:p-8">
+
+        <header class="text-center mb-12 mt-8">
+            <h1 class="text-4xl font-extrabold text-teal-800 mb-4">澳门一日游互动行程规划</h1>
+            <p class="text-lg text-stone-700">探索6月5日澳门历史韵味与璀璨路氹的完美融合之旅。</p>
+        </header>
+
+        <section id="section-morning" class="content-section mb-12 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 border-b-2 border-teal-500 pb-2">☀️ 上午 (约 10:20 - 13:30): 抵达澳门，沉浸半岛历史心跳</h2>
+            <p class="text-stone-600 mb-6">一日之计在于晨。抵达澳门后，我们将首先利用便捷的免费穿梭巴士，直达澳门半岛的中心地带，开始一段充满历史韵味的徒步探索之旅，打卡多个经典地标。</p>
+            <div class="space-y-6">
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 10:20 - 10:50: 抵达拱北口岸 & 无缝换乘至新葡京</h3>
+                    <p class="text-sm text-stone-600">🚶‍♂️ 活动：顺利过关后，向左转寻找前往新葡京酒店的免费穿梭巴士（发财车）。</p>
+                    <p class="text-sm text-stone-600">🚌 交通：新葡京免费穿梭巴士，约20分钟车程。</p>
+                    <p class="text-sm text-stone-500 mt-1">💡 提示：这是开启澳门之旅最便捷经济的方式之一。</p>
+                </div>
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 10:50 - 11:00: 新葡京与葡京娱乐场外观合影</h3>
+                    <p class="text-sm text-stone-600">📸 活动：欣赏并拍摄新葡京酒店与葡京娱乐场的独特建筑，感受“赌王同款”经典取景地。</p>
+                </div>
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 11:00 - 11:15: 步行前往玫瑰圣母堂</h3>
+                    <p class="text-sm text-stone-600">🚶‍♂️ 交通：从新葡京步行约13-15分钟。</p>
+                    <p class="text-sm text-stone-600">🏛️ 景点：欣赏美丽的鹅黄色巴洛克风格教堂，世界文化遗产。</p>
+                </div>
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 11:15 - 11:30: 探访恋爱巷</h3>
+                    <p class="text-sm text-stone-600">🚶‍♂️ 交通：从玫瑰圣母堂步行约6分钟。</p>
+                    <p class="text-sm text-stone-600">💖 景点：色彩柔和的葡式小巷，绝佳拍照地。</p>
+                </div>
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 11:30 - 12:30: 瞻仰大三巴牌坊</h3>
+                    <p class="text-sm text-stone-600">🚶‍♂️ 交通：从恋爱巷步行约4分钟。</p>
+                    <p class="text-sm text-stone-600">🏛️ 景点：澳门最具代表性地标。可探索牌坊石雕，登高望远。时间充裕可参观旁边的澳门博物馆和大炮台。</p>
+                    <p class="text-sm text-stone-500 mt-1">💡 备注：行程资料中提及永利澳门“发财树”表演（12点起整点），若时间极度充裕可考虑，但本行程优先确保午餐及后续路氹行程。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-afternoon" class="content-section mb-12 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 border-b-2 border-teal-500 pb-2">🏙️ 下午 (约 13:30 - 18:00): 氹仔村风味与路氹城璀璨</h2>
+            <p class="text-stone-600 mb-6">午后时光，我们将转换节奏，从历史悠久的澳门半岛前往充满地道风情的氹仔旧城区享用午餐，随后漫步于路氹金光大道，感受各大豪华度假村的独特魅力和宏伟建筑。</p>
+            <div class="space-y-6">
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 13:30 - 14:45: 前往氹仔旧城区 (官也街) & 品尝地道午餐</h3>
+                    <p class="text-sm text-stone-600">🚶‍♂️🚌 交通：从大三巴区域步行约10分钟至栢港停车场巴士站，搭乘33路巴士（9站，约30分钟）抵达官也街。</p>
+                    <p class="text-sm text-stone-600">🍽️ 午餐推荐 (官也街)：</p>
+                    <ul class="list-disc list-inside text-sm text-stone-500 ml-4 mt-1">
+                        <li>老day牛杂</li>
+                        <li>安德鲁饼店 (葡式蛋挞)</li>
+                        <li>dino汉堡 (花生酱双层和牛汉堡)</li>
+                        <li>世记咖啡 (猪扒包, 炒通粉)</li>
+                        <li>杨枝金捞甜品</li>
+                    </ul>
+                </div>
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 14:45 - 18:00: 路氹金光大道的视觉盛宴</h3>
+                    <div class="ml-4 mt-2 space-y-3 border-l-2 border-teal-200 pl-4">
+                        <div>
+                            <p class="text-md font-medium text-teal-600">14:45 - 15:00: 步行前往澳门威尼斯人</p>
+                            <p class="text-sm text-stone-600">🚶‍♂️ 交通：从官也街步行约15分钟。</p>
+                        </div>
+                        <div>
+                            <p class="text-md font-medium text-teal-600">15:00 - 16:00: 探索威尼斯人</p>
+                            <p class="text-sm text-stone-600">✨ 活动：欣赏奢华内装、大运河购物中心，感受宏伟氛围。</p>
+                        </div>
+                        <div>
+                            <p class="text-md font-medium text-teal-600">16:00 - 16:15: 步行前往澳门巴黎人</p>
+                            <p class="text-sm text-stone-600">🚶‍♂️ 交通：从威尼斯人步行约15分钟。</p>
+                        </div>
+                        <div>
+                            <p class="text-md font-medium text-teal-600">16:15 - 16:45: 体验巴黎人风情</p>
+                            <p class="text-sm text-stone-600">🗼 活动：观赏1/2比例复制的埃菲尔铁塔，寻找大草坪拍摄全貌。</p>
+                        </div>
+                        <div>
+                            <p class="text-md font-medium text-teal-600">16:45 - 17:00: 步行前往澳门伦敦人</p>
+                            <p class="text-sm text-stone-600">🚶‍♂️ 交通：从巴黎人向东步行约9分钟。</p>
+                        </div>
+                        <div>
+                            <p class="text-md font-medium text-teal-600">17:00 - 17:30: 欣赏伦敦人景致</p>
+                            <p class="text-sm text-stone-600">🇬🇧 活动：欣赏议会大厦、大本钟复制建筑。傍晚灯光渐起，更添魅力。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-evening" class="content-section mb-12 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 border-b-2 border-teal-500 pb-2">🌃 傍晚 (约 17:30 - 22:30): 璀璨表演与离境准备</h2>
+            <p class="text-stone-600 mb-6">夜幕降临，路氹金光大道将展现其最为迷人的一面。我们将前往美狮美高梅稍作停留，然后沉浸在永利皇宫免费且壮观的音乐喷泉和观光缆车体验中，为澳门之行留下难忘的璀璨回忆。</p>
+            <div class="space-y-6">
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 17:30 - 18:10: 短暂停留美狮美高梅 (可选但推荐)</h3>
+                    <p class="text-sm text-stone-600">🚶‍♂️ 交通：从伦敦人步行约10分钟。</p>
+                    <p class="text-sm text-stone-600">☕ 活动：赌场内可能有免费奶茶糕点，可作短暂休整。</p>
+                </div>
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 18:10 - 21:30: 尽享永利皇宫的视听盛宴</h3>
+                    <p class="text-sm text-stone-600">🚶‍♂️ 交通：从美狮美高梅向东步行约13分钟。</p>
+                    <p class="text-sm text-stone-600">🌟 活动亮点：</p>
+                    <ul class="list-disc list-inside text-sm text-stone-500 ml-4 mt-1">
+                        <li>🎶 **音乐喷泉:** 免费！17:00后每20分钟一场 (14:00-17:00为每30分钟一场)。</li>
+                        <li>🚠 **观光缆车:** 免费！6月5日(周四)运营时间16:00-22:00，<strong class="text-red-600">最后一班21:40</strong>。</li>
+                    </ul>
+                    <p class="text-sm text-stone-600 mt-1">🍽️ 晚餐考虑：可在美狮美高梅享用免费茶点，或在永利皇宫内简餐/小食，或此前官也街已饱餐。</p>
+                </div>
+                 <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                    <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 21:30 - 22:30: 弹性缓冲 / 最后夜景 / 简易小食</h3>
+                    <p class="text-sm text-stone-600">⏳ 活动：预留弹性时间。可再赏一场喷泉，从容前往巴士站，或购买小食。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-night" class="content-section mb-12 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 border-b-2 border-teal-500 pb-2">🌙 夜间 (约 22:30 - 23:30后): 返回拱北口岸</h2>
+            <p class="text-stone-600 mb-6">充实的一天即将结束，我们将搭乘免费穿梭巴士返回拱北口岸，确保在午夜前顺利离境。请务必留意末班车时间，为澳门之旅画上圆满句号。</p>
+            <div class="p-4 bg-stone-50 rounded-lg border border-stone-200">
+                <h3 class="text-xl font-semibold text-teal-600 mb-1">⏰ 22:30 - 23:30后: 启程返回</h3>
+                <p class="text-sm text-stone-600">🎯 出发目标时间：最迟22:30-22:45抵达永利皇宫前往拱北口岸的免费穿梭巴士站。</p>
+                <p class="text-sm text-stone-600">🚌 交通：永利皇宫免费穿梭巴士。</p>
+                <p class="text-sm text-stone-600"><strong class="text-red-600">🕒 末班车时间：23:30。</strong></p>
+                <p class="text-sm text-stone-600">⏱️ 车程：约40-70+分钟，建议按较长时间预算。</p>
+                <p class="text-sm text-stone-600">🏁 预计抵达口岸：23:30-23:55，符合午夜12点前离境要求。</p>
+                <p class="text-sm text-stone-500 mt-1">💡 重要：尽量乘坐较早班次，避免冒险等待绝对末班车。</p>
+            </div>
+        </section>
+
+        <section id="section-summary" class="content-section mb-12 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 border-b-2 border-teal-500 pb-2">📊 澳门一日游精华速览</h2>
+            <p class="text-stone-600 mb-6">这份简明指南汇总了关键的交通信息、表演时间和重要截止点，方便您在游览过程中随时查阅，确保澳门之行顺畅无忧。</p>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-stone-200">
+                    <thead class="bg-stone-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">行程阶段</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">交通方式与预计用时</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-stone-500 uppercase tracking-wider">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-stone-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">拱北口岸 → 新葡京</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">新葡京免费穿梭巴士 (约 20 分钟)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">出关后左转寻找</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">大三巴区域 → 氹仔旧城区 (官也街)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">步行 (10 分钟) 至栢港停车场巴士站，转乘33路巴士 (约 30 分钟, 9站)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">-</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">路氹金光大道穿梭</td>
+                            <td class="px-6 py-4 whitespace-normal text-sm text-stone-500">主要依靠步行 (官也街-威尼斯人15m, 威尼斯人-巴黎人15m, 巴黎人-伦敦人9m, 伦敦人-美狮10m, 美狮-永利皇宫13m)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">-</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">永利皇宫音乐喷泉</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">17:00后：每20分钟一场</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">免费观赏</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">永利皇宫观光缆车 (6月5日, 周四)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">运营：16:00 - 22:00 (末班：21:40)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">免费乘坐, <strong class="text-red-600">注意末班时间</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-stone-900">永利皇宫 → 拱北口岸</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500">永利皇宫免费穿梭巴士 (约 40-70+ 分钟)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-stone-500"><strong class="text-red-600">末班车：23:30</strong>。提早候车。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <section id="section-chart" class="content-section mb-12 bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 border-b-2 border-teal-500 pb-2">🕒 时间分配概览</h2>
+            <p class="text-stone-600 mb-6">下图大致展示了本次一日游中，在各个主要阶段的预计时间投入比例，帮助您对行程的节奏有一个直观的了解。</p>
+            <div class="chart-container">
+                <canvas id="timeAllocationChart"></canvas>
+            </div>
+        </section>
+
+        <section id="section-tips" class="content-section bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-bold text-teal-700 mb-6 border-b-2 border-teal-500 pb-2">💡 温馨提示：畅游澳门小贴士</h2>
+            <p class="text-stone-600 mb-6">最后，分享一些实用建议，希望能让您的澳门之旅更加愉快和舒适！</p>
+            <ul class="space-y-3 text-stone-700">
+                <li class="flex items-start">
+                    <span class="text-teal-600 mr-2 mt-1">💰</span>
+                    <div><strong>关于货币:</strong> 建议准备澳门元(MOP)或港元(HKD)，方便小额消费及乘坐公共巴士（虽本行程多用免费巴士）。</div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-teal-600 mr-2 mt-1">👟</span>
+                    <div><strong>舒适鞋履:</strong> 当天步行较多，务必选择舒适的鞋子。</div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-teal-600 mr-2 mt-1">💧</span>
+                    <div><strong>保持水分:</strong> 澳门六月可能湿热，请随身带水并及时补充。美狮美高梅的免费饮品是不错的补给点。</div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-teal-600 mr-2 mt-1">🗺️</span>
+                    <div><strong>网络与地图:</strong> 建议提前下载离线地图，或考虑购买当地电话卡/eSIM，方便导航。</div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-teal-600 mr-2 mt-1">📸</span>
+                    <div><strong>摄影准备:</strong> 澳门处处是景，确保手机/相机电量充足，可携带充电宝。</div>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-teal-600 mr-2 mt-1">🔄</span>
+                    <div><strong>保持弹性:</strong> 行程仅供参考，可灵活调整，但务必牢记末班缆车(21:40)和返程末班穿梭巴士(23:30)时间。</div>
+                </li>
+            </ul>
+        </section>
+
+    </div>
+
+    <footer class="text-center py-8 text-stone-500 text-sm">
+        <p>祝您澳门一日游旅途愉快！</p>
+        <p>&copy; 互动行程规划</p>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // If it's a mobile menu link, close the menu first
+                    if (mobileMenu && !mobileMenu.classList.contains('hidden') && this.closest('#mobile-menu')) {
+                         mobileMenu.classList.add('hidden');
+                    }
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Chart.js: Time Allocation Chart
+        const ctxTime = document.getElementById('timeAllocationChart');
+        if (ctxTime) {
+            new Chart(ctxTime, {
+                type: 'doughnut',
+                data: {
+                    labels: ['☀️ 上午 (历史城区)', '🏙️ 下午 (氹仔与路氹初探)', '🌃 傍晚至夜间 (路氹夜景与离境)'],
+                    datasets: [{
+                        label: '时间分配',
+                        data: [3.17, 4.5, 5.5], // Approximate hours
+                        backgroundColor: [
+                            'rgba(20, 184, 166, 0.7)', // teal-500
+                            'rgba(13, 148, 136, 0.7)', // teal-600
+                            'rgba(15, 118, 110, 0.7)'  // teal-700
+                        ],
+                        borderColor: [
+                            'rgba(20, 184, 166, 1)',
+                            'rgba(13, 148, 136, 1)',
+                            'rgba(15, 118, 110, 1)'
+                        ],
+                        borderWidth: 1,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                color: '#44403c' // stone-700
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed.toFixed(2) + ' 小时';
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '各阶段预计用时比例',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#115e59' // teal-800
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
+ 
